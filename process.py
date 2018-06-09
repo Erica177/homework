@@ -235,7 +235,6 @@ def select(Node):
       for cc in col_list:
         print(cc[0] + "\t|\t", end='')
       print("------------------------------------------------------------------")
-      print('')
       if not where_lists == None: # where_lists exist:
         with open(work_path + table_name + ".txt", 'r') as f:
           for line in f:
@@ -262,7 +261,6 @@ def select(Node):
             show_colum_num = show_colum_num + [col_list.index(c)]
             break
       print("------------------------------------------------------------------")
-      print('')
       if not where_lists == None:
         with open(work_path + table_name + ".txt",'r') as f:
           for line in f:
@@ -304,7 +302,6 @@ def select(Node):
       for cc in col_list:
         print(cc[0] + "\t|\t", end='')
       print("------------------------------------------------------------------")
-      print('')
       if not where_lists == None:
         with open(work_path +"dikaer.txt",'r') as f:
           for line in f:
@@ -338,7 +335,6 @@ def select(Node):
               show_colum_num = show_colum_num + [col_list.index(c)]
               break
       print("------------------------------------------------------------------")
-      print('')
       if not where_lists == None:
         with open(work_path+"dikaer.txt",'r') as f:
           for line in f:
