@@ -10,7 +10,7 @@ from process import process
 
 if __name__ == '__main__':
     while True:
-        cmd = input("CMD->")
+        cmd = input("User@Cmd: ~$ ")
         res = yacc.parse(cmd,lexer=lex)
         #print(type(result))
         if not res:continue

@@ -40,7 +40,7 @@ def create_database(Node):
     f_.close()
     f.write(Node.database_name+"\n")
     f.close()
-    print("Op Result : create database successfully")
+    print("\nOp Result : create database successfully")
     
 def create_table(Node):
   "Node class - CreateTableNode"
@@ -56,18 +56,18 @@ def create_table(Node):
   f.close()
   f = open(work_path+tb_name+".txt",mode='w')
   f.close()
-  print("Op Result : create table successfully")
+  print("\nOp Result : create table successfully")
   
 def show_databases():
   database_name = os.listdir(sys_path)
   if len(database_name) == 1:
-    print("There are no databases now!")
+    print("\nThere are no databases now!")
   else:
     database_name.remove("sys.dat")
     count = 1
     print("\nDatabase Name:\n------------------------------------------------------------------")
     for i in database_name:
-      print(str(count)+"th\t"+i)
+      print(str(count)+"th\t|\t"+i)
       count += 1
     print("------------------------------------------------------------------")
     
@@ -78,12 +78,12 @@ def show_tables():
       if line.split()[0] not in table_name:
         table_name += [line.split()[0]]
     if len(table_name) == 0:
-      print("There are no tables now!")
+      print("\nThere are no tables now!")
     else:
       count = 1
       print("\nTable Name:\n------------------------------------------------------------------")
       for i in table_name:
-        print(str(count)+"th\t"+i)
+        print(str(count)+"th\t|\t"+i)
         count += 1
       print("------------------------------------------------------------------")
 
@@ -92,9 +92,9 @@ def use_database(Node):
   if Node.database_name in os.listdir(sys_path):
     global work_path
     work_path = sys_path + Node.database_name +"\\"#改变工作路径
-    print("Now using database : "+Node.database_name)
+    print("\nNow using database : "+Node.database_name)
   else:
-    print("Error: Database "+Node.database_name+" not exists")
+    print("\nError: Database "+Node.database_name+" not exists")
   
 def drop_database(Node):
   "Node class - DropDatabaseNode"
@@ -112,11 +112,11 @@ def drop_database(Node):
     os.remove(sys_path+"sys.dat")
     os.rename(sys_path+"sys_copy.dat",sys_path+"sys.dat")
     if not flag:
-      print("Error:Database "+Node.database_name+" doesn't exist")
+      print("\nError:Database "+Node.database_name+" doesn't exist")
     else:
-      print("Op Result : drop database successfully")
+      print("\nOp Result : drop database successfully")
   except OSError:
-    print("Error: Cannot drop the database:"+Node.database_name+"\n")
+    print("\nError: Cannot drop the database:"+Node.database_name+"\n")
     
 def drop_table(Node):
   "Node class - DropTableNode"
@@ -131,9 +131,9 @@ def drop_table(Node):
             continue
     os.remove(work_path+"db.dat")
     os.rename(work_path+"db_copy.dat",work_path+"db.dat")
-    print("Op Result : drop table successfully")
+    print("\nOp Result : drop table successfully")
   else:
-    print("Error: "+Node.table_name+" doesn't exist!")
+    print("\nError: "+Node.table_name+" doesn't exist!")
     
 def insert(Node):
   "Node class - 1.InsertNode 2.IntoNode 3.Value"
@@ -159,7 +159,7 @@ def insert(Node):
       for i in range(col_num):
         f2.write("NULL ")
     f2.write("\n")
-  print("Op Result : Insert successfully")
+  print("\nOp Result : Insert successfully")
 
 def delete(Node):
   
@@ -182,7 +182,7 @@ def delete(Node):
         else:  continue
   os.remove(work_path+table_name+".txt")
   os.rename(work_path+table_name+"_copy.txt",work_path+table_name+".txt")
-  print("Op Result : delete successfully")
+  print("\nOp Result : delete successfully")
   
 def update(Node):
   "Node class - UpdateNode"
@@ -215,7 +215,7 @@ def update(Node):
           f_.write(line)
   os.remove(work_path+table_name+".txt")
   os.rename(work_path+table_name+"_copy.txt",work_path+table_name+".txt")
-  print("Op Result : update successfully")
+  print("\nOp Result : update successfully")
 
 def select(Node):
   select_lists = Node.select_lists
@@ -233,7 +233,8 @@ def select(Node):
     if isinstance(select_lists[0],str): #Condition * （select all lines）
       assert (select_lists[0] == "*")
       for cc in col_list:
-        print(cc[0] + "\t\t", end='')
+        print(cc[0] + "\t|\t", end='')
+      print("------------------------------------------------------------------")
       print('')
       if not where_lists == None: # where_lists exist:
         with open(work_path + table_name + ".txt", 'r') as f:
@@ -241,25 +242,26 @@ def select(Node):
             line_dict = create_dict(col_list, line)
             if find_where(line_dict, where_lists):
               for i in line.split():
-                print(i + "\t\t", end='')
+                print(i + "\t|\t", end='')
               print('')
       else:
         with open(work_path+table_name+".txt",'r') as f:
           for line in f:
             line_split = line.split()
             for s in line_split:
-              print(s + "\t\t",end='')
+              print(s + "\t|\t",end='')
             print('')
       print("------------------------------------------------------------------")
     else:
       assert (select_lists[i].type == node.NodeType.relation_attr for i in select_lists)
       show_colum_num = []
       for rr in select_lists:
-        print(rr.attr_name+"\t\t",end='')
+        print(rr.attr_name+"\t|\t",end='')
         for c in col_list:
           if rr.attr_name == c[0]:
             show_colum_num = show_colum_num + [col_list.index(c)]
             break
+      print("------------------------------------------------------------------")
       print('')
       if not where_lists == None:
         with open(work_path + table_name + ".txt",'r') as f:
@@ -267,14 +269,14 @@ def select(Node):
             line_dict = create_dict(col_list,line)
             if find_where(line_dict,where_lists):
               for num in show_colum_num:
-                print(line.split()[num]+"\t\t",end='')
+                print(line.split()[num]+"\t|\t",end='')
               print('')
       else:
         with open(work_path + table_name + ".txt",'r') as f:
           for line in f:
             line_dict = create_dict(col_list,line)
             for num in show_colum_num:
-              print(line.split()[num]+"\t\t",end='')
+              print(line.split()[num]+"\t|\t",end='')
             print('')
       print("------------------------------------------------------------------")
   #多表
@@ -300,7 +302,8 @@ def select(Node):
     if isinstance(select_lists[0],str): # select * 
       assert (select_lists[0] == "*")
       for cc in col_list:
-        print(cc[0] + "\t\t", end='')
+        print(cc[0] + "\t|\t", end='')
+      print("------------------------------------------------------------------")
       print('')
       if not where_lists == None:
         with open(work_path +"dikaer.txt",'r') as f:
@@ -308,13 +311,13 @@ def select(Node):
             line_dict = create_dict(col_list,line)
             if find_where(line_dict,where_lists):
               for s in line.split():
-                print(s + "\t\t", end='')
+                print(s + "\t|\t", end='')
               print('')
       else:
         with open(work_path +"dikaer.txt",'r') as f:
           for line in f:
             for s in line.split():
-              print(s + "\t\t", end='')
+              print(s + "\t|\t", end='')
             print('')
       os.remove(work_path +"dikaer.txt")
       print("------------------------------------------------------------------")
@@ -323,17 +326,18 @@ def select(Node):
       show_colum_num = []
       for rr in select_lists:
         if rr.table_name == None:
-          print(rr.attr_name + "\t\t\t", end='')
+          print(rr.attr_name + "\t\t|\t", end='')
           for c in col_list:
             if rr.attr_name == c[0]:
               show_colum_num = show_colum_num + [col_list.index(c)]
               break
         else:
-          print(rr.table_name+"."+rr.attr_name + "\t\t", end='')
+          print(rr.table_name+"."+rr.attr_name + "\t|\t", end='')
           for c in col_list:
             if rr.table_name == c[2] and rr.attr_name == c[0]:
               show_colum_num = show_colum_num + [col_list.index(c)]
               break
+      print("------------------------------------------------------------------")
       print('')
       if not where_lists == None:
         with open(work_path+"dikaer.txt",'r') as f:
@@ -341,13 +345,13 @@ def select(Node):
             line_dict = create_dict(col_list,line)
             if find_where(line_dict,where_lists):
               for num in show_colum_num:
-                print(line.split()[num]+"\t\t\t",end='')
+                print(line.split()[num]+"\t\t|\t",end='')
               print('')
       else:
         with open(work_path+"dikaer.txt",'r') as f:
           for line in f:
             for num in show_colum_num:
-              print(line.split()[num]+"\t\t\t",end='')
+              print(line.split()[num]+"\t\t|\t",end='')
             print('')
       os.remove(work_path +"dikaer.txt")
       print("------------------------------------------------------------------")
