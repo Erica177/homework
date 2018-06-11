@@ -65,11 +65,11 @@ def show_databases():
   else:
     database_name.remove("sys.dat")
     count = 1
-    print("\nDatabase Name:\n------------------------------------------------------------------")
+    print("\nDatabase Name:\n----------------------------------------------------------------------------")
     for i in database_name:
       print(str(count)+"th\t|\t"+i)
       count += 1
-    print("------------------------------------------------------------------")
+    print("----------------------------------------------------------------------------")
     
 def show_tables():
     f = open(work_path + "db.dat",'r')
@@ -81,11 +81,11 @@ def show_tables():
       print("\nThere are no tables now!")
     else:
       count = 1
-      print("\nTable Name:\n------------------------------------------------------------------")
+      print("\nTable Name:\n----------------------------------------------------------------------------")
       for i in table_name:
         print(str(count)+"th\t|\t"+i)
         count += 1
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
 
 def use_database(Node):
   "Node class - UseDatabaseNode"
@@ -177,7 +177,7 @@ def delete(Node):
       for line in f:
         line_dic = create_dict(col_list,line)
         #print(line_dic)
-        if not find_where(line_dic,where_lists):
+        if not excute_cmd(line_dic,where_lists):
           f_new.write(line)
         else:  continue
   os.remove(work_path+table_name+".txt")
@@ -198,7 +198,7 @@ def update(Node):
     with open(work_path+table_name+"_copy.txt",'w') as f_:
       for line in f:
         line_dict = create_dict(col_list,line)
-        if find_where(line_dict,where_list):
+        if excute_cmd(line_dict,where_list):
           new_line = line.split()
           for st in set_list:
             for c in col_list:
@@ -229,17 +229,17 @@ def select(Node):
       for line in f:
         if table_name == line.split()[0]:
           col_list += [[line.split()[2]]+[line.split()[3]]]
-    print("\nQuery Result:\n------------------------------------------------------------------")
+    print("\nQuery Result:\n----------------------------------------------------------------------------")
     if isinstance(select_lists[0],str): #Condition * （select all lines）
       assert (select_lists[0] == "*")
       for cc in col_list:
         print(cc[0] + "\t|\t", end='')
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
       if not where_lists == None: # where_lists exist:
         with open(work_path + table_name + ".txt", 'r') as f:
           for line in f:
             line_dict = create_dict(col_list, line)
-            if find_where(line_dict, where_lists):
+            if excute_cmd(line_dict, where_lists):
               for i in line.split():
                 print(i + "\t|\t", end='')
               print('')
@@ -250,7 +250,7 @@ def select(Node):
             for s in line_split:
               print(s + "\t|\t",end='')
             print('')
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
     else:
       assert (select_lists[i].type == node.NodeType.relation_attr for i in select_lists)
       show_colum_num = []
@@ -260,12 +260,12 @@ def select(Node):
           if rr.attr_name == c[0]:
             show_colum_num = show_colum_num + [col_list.index(c)]
             break
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
       if not where_lists == None:
         with open(work_path + table_name + ".txt",'r') as f:
           for line in f:
             line_dict = create_dict(col_list,line)
-            if find_where(line_dict,where_lists):
+            if excute_cmd(line_dict,where_lists):
               for num in show_colum_num:
                 print(line.split()[num]+"\t|\t",end='')
               print('')
@@ -276,7 +276,7 @@ def select(Node):
             for num in show_colum_num:
               print(line.split()[num]+"\t|\t",end='')
             print('')
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
   #多表
   else:
     table_name = from_lists
@@ -296,17 +296,17 @@ def select(Node):
           it[0] = it[2]+"."+it[0]
           it_t[0] = it_t[2]+"."+it_t[0]
     dikaer(table_name)
-    print("\nQuery Result:\n------------------------------------------------------------------")
+    print("\nQuery Result:\n----------------------------------------------------------------------------")
     if isinstance(select_lists[0],str): # select * 
       assert (select_lists[0] == "*")
       for cc in col_list:
         print(cc[0] + "\t|\t", end='')
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
       if not where_lists == None:
         with open(work_path +"dikaer.txt",'r') as f:
           for line in f:
             line_dict = create_dict(col_list,line)
-            if find_where(line_dict,where_lists):
+            if excute_cmd(line_dict,where_lists):
               for s in line.split():
                 print(s + "\t|\t", end='')
               print('')
@@ -317,7 +317,7 @@ def select(Node):
               print(s + "\t|\t", end='')
             print('')
       os.remove(work_path +"dikaer.txt")
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
     else:# select col
       assert (select_lists[i].type == node.NodeType.relation_attr for i in select_lists)
       show_colum_num = []
@@ -334,12 +334,12 @@ def select(Node):
             if rr.table_name == c[2] and rr.attr_name == c[0]:
               show_colum_num = show_colum_num + [col_list.index(c)]
               break
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
       if not where_lists == None:
         with open(work_path+"dikaer.txt",'r') as f:
           for line in f:
             line_dict = create_dict(col_list,line)
-            if find_where(line_dict,where_lists):
+            if excute_cmd(line_dict,where_lists):
               for num in show_colum_num:
                 print(line.split()[num]+"\t\t|\t",end='')
               print('')
@@ -350,7 +350,7 @@ def select(Node):
               print(line.split()[num]+"\t\t|\t",end='')
             print('')
       os.remove(work_path +"dikaer.txt")
-      print("------------------------------------------------------------------")
+      print("----------------------------------------------------------------------------")
       
 def _exit():
   os._exit(0)
@@ -405,8 +405,7 @@ def get_value(line_dict,Node):
 def create_dict(col_list,line):# col_list[[列1名,列1type],[列2名,列2type]...] line_list[列1值,列2值....]
   "构造当前表的每一行的字典{'列1':值1,'列2':值2}"
   line_list = line.split()
-  #print(line_list)
-  dict = {}#dict {'列1':值1,'列2':值2}
+  dict = {}
   i = 0
   if len(col_list[0]) == 2:
       for c in col_list:
@@ -438,16 +437,16 @@ def create_dict(col_list,line):# col_list[[列1名,列1type],[列2名,列2type].
         raise RuntimeError("Error!! line_list type error!")
   return dict
   
-def find_where(line_dict,Node):
+def excute_cmd(line_dict,Node):
   assert(Node.type == node.NodeType.condition)
   where_list = Node
   L_cond = where_list.L_cond
   R_cond = where_list.R_cond
   op = where_list.op
   if op == "AND":
-    return find_where(line_dict,L_cond) and find_where(line_dict,R_cond)
+    return excute_cmd(line_dict,L_cond) and excute_cmd(line_dict,R_cond)
   elif op == "OR":
-    return  find_where(line_dict,L_cond) or find_where(line_dict,R_cond)
+    return  excute_cmd(line_dict,L_cond) or excute_cmd(line_dict,R_cond)
   elif op == "=":
     return get_value(line_dict, L_cond) == get_value(line_dict, R_cond)
   elif op == "!=":
@@ -464,24 +463,21 @@ def find_where(line_dict,Node):
     raise RuntimeError("Error!! op type error!!")
   
 def dikaer(tables):
-  all_tb_list = []
+  all_tb = []
   for tb in tables:
     with open(work_path+tb.upper()+".txt","r") as f:
       tb_list = []
       for line in f:
-        tb_list = tb_list + [line.split()]
-      all_tb_list = all_tb_list + [tb_list] #[ [ [t1.r1] [t1.r2] ]  [  []  [] ]  [  []  [] ] ]
-  p = all_tb_list[0]
-  all_tb_list = all_tb_list[1:]
-  for abl in all_tb_list:
-    p = list(itertools.product(p,abl))
-    if isinstance(p[0][0],tuple):
-      for i in range(len(p)):
-        p[i] = tuple(list(p[i][0]) + p[i][1])
-  with open(work_path+"dikaer.txt",'w') as f:
-        #[  ([]  []  [])   ()   ()  ]
-    for p_item in p:
-      for t_item in p_item:
-        for li in t_item:
-          f.write(li+" ")
+        tb_list += [line.split()]
+      all_tb += [tb_list]
+  p = all_tb[0]
+  all_tb = all_tb[1:]
+  for i in all_tb:
+    p = list(itertools.product(p,i))#排列组合
+  #print(p)
+  with open(work_path+"dikaer.txt",'w') as f:# p [([],[])...]
+    for i in p:
+      for j in i:
+        for k in j:
+          f.write(k+" ")
       f.write("\n")
